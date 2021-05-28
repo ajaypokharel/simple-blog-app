@@ -9,18 +9,20 @@ from .permissions import IsBlogOwner
 from .serializer import BlogPostSerializer, BlogEventModelSerializer
 
 
-class Blog(ModelViewSet):
+class BlogViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.action in ['events_create'] and self.request.user.is_authenticated:
             return BlogModel.objects.filter(creator=self.request.user)
+        if self.action in ['like', 'unlike']:
+            return BlogModel.objects.exclude(creator=self.request.user)
         return BlogModel.objects.all()
 
     def get_permissions(self):
         permission_classes = []
         if self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
-        if self.action in ['create']:
+        if self.action in ['create', 'like', 'unlike']:
             permission_classes = [IsAuthenticated]
         if self.action in ['destroy', 'update', 'partial_update']:
             permission_classes = [IsBlogOwner]
@@ -30,6 +32,11 @@ class Blog(ModelViewSet):
         if self.action in ['events', 'events_create']:
             return BlogEventModelSerializer
         return BlogPostSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -53,3 +60,19 @@ class Blog(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, *args, **kwargs):
+        blog = self.get_object()
+        likes = blog.likes
+        new_like = likes + 1
+        BlogModel.objects.filter(id=blog.id).update(likes=new_like)
+        return Response({'detail': 'Post liked'}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def unlike(self, request, *args, **kwargs):
+        blog = self.get_object()
+        likes = blog.likes
+        new_like = likes - 1
+        BlogModel.objects.filter(id=blog.id).update(likes=new_like)
+        return Response({'detail': 'Post Disliked'}, status=status.HTTP_201_CREATED)

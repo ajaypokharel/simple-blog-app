@@ -11,6 +11,7 @@ class BlogModel(models.Model):
     image = models.ImageField(default='default.jpg', upload_to='blog/')
     creator = models.ForeignKey(USER, related_name='blogs', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    likes = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['created']
