@@ -1,8 +1,8 @@
 from rest_framework.routers import DefaultRouter
-from .views import Blog
+from .views import BlogViewSet
 
 r = DefaultRouter()
-r.register('blog', Blog, basename='blog')
+r.register('blog', BlogViewSet, basename='blog')
 
 urlpatterns = [
 
