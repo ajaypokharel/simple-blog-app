@@ -1,22 +1,26 @@
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .models import BlogModel
+from .models import Blog
 from .permissions import IsBlogOwner
 from .serializer import BlogPostSerializer, BlogEventModelSerializer
 
 
 class BlogViewSet(ModelViewSet):
+    lookup_field = 'uuid'
+    lookup_url_kwarg = 'uuid'
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
         if self.action in ['events_create'] and self.request.user.is_authenticated:
-            return BlogModel.objects.filter(creator=self.request.user)
+            return Blog.objects.filter(creator=self.request.user)
         if self.action in ['like', 'unlike']:
-            return BlogModel.objects.exclude(creator=self.request.user)
-        return BlogModel.objects.all()
+            return Blog.objects.exclude(creator=self.request.user)
+        return Blog.objects.all()
 
     def get_permissions(self):
         permission_classes = []
@@ -36,6 +40,8 @@ class BlogViewSet(ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
+        if self.action in ['update', 'partial_update']:
+            kwargs['fields'] = ['title', 'content', 'image']
         return serializer_class(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
@@ -66,7 +72,7 @@ class BlogViewSet(ModelViewSet):
         blog = self.get_object()
         likes = blog.likes
         new_like = likes + 1
-        BlogModel.objects.filter(id=blog.id).update(likes=new_like)
+        Blog.objects.filter(id=blog.id).update(likes=new_like)
         return Response({'detail': 'Post liked'}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['post'])
@@ -74,5 +80,5 @@ class BlogViewSet(ModelViewSet):
         blog = self.get_object()
         likes = blog.likes
         new_like = likes - 1
-        BlogModel.objects.filter(id=blog.id).update(likes=new_like)
+        Blog.objects.filter(id=blog.id).update(likes=new_like)
         return Response({'detail': 'Post Disliked'}, status=status.HTTP_201_CREATED)

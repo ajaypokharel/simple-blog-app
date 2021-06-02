@@ -1,15 +1,19 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from commons.constants import GENDER_CHOICES
+from commons.serializers import DynamicFieldsModelSerializer
+
 USER = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(DynamicFieldsModelSerializer):
+    gender = serializers.ChoiceField(choices=GENDER_CHOICES, allow_blank=True, allow_null=True)
 
     class Meta:
         model = USER
-        fields = ['id', 'username', 'password', 'email']
-        read_only_fields = ['id']
+        fields = ['email', 'first_name', 'last_name', 'gender', 'username']
+        read_only_fields = ['username', 'display_name']
         extra_kwargs = {
             'password': {
                 'write_only': True
