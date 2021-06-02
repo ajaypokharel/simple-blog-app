@@ -1,19 +1,33 @@
 from rest_framework import serializers
-from .models import BlogModel, BlogEvent
+
+from commons.serializers import DynamicFieldsModelSerializer
+from user.serializer import UserSerializer
+from .models import Blog, BlogEvent, Bookmark
 
 
-class BlogPostSerializer(serializers.ModelSerializer):
-    creator = serializers.ReadOnlyField(source='creator.username')
+class BlogPostSerializer(DynamicFieldsModelSerializer):
+    creator = UserSerializer(fields=['email', 'display_name'], read_only=True)
 
     class Meta:
-        model = BlogModel
-        fields = ['id', 'title', 'content', 'image', 'creator', 'likes']
+        model = Blog
+        fields = ['uuid', 'title', 'content', 'image', 'creator', 'likes', 'created_at', 'updated_at']
+        read_only_fields = ['creator,' 'uuid', 'created_at', 'updated_at']
 
 
-class BlogEventModelSerializer(serializers.ModelSerializer):
-    blog = BlogPostSerializer(read_only=True)
+class BlogEventModelSerializer(DynamicFieldsModelSerializer):
+    blog = BlogPostSerializer(fields=['title', 'image', 'creator', 'content'], read_only=True)
 
     class Meta:
         model = BlogEvent
-        fields = ['id', 'blog', 'name']
-        read_only_fields = ['id', 'blog']
+        fields = ['uuid', 'blog', 'name']
+        read_only_fields = ['blog', 'uuid']
+
+
+class BookmarkSerializer(DynamicFieldsModelSerializer):
+    blog = BlogPostSerializer(fields=['title', 'content', 'image', 'creator', 'likes'], read_only=True)
+    user = UserSerializer(fields=['email', 'display_name'], read_only=True)
+
+    class Meta:
+        model = Bookmark
+        fields = ['uuid', 'blog', 'user']
+        read_only_fields = ['uuid']
