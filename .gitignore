@@ -143,3 +143,4 @@ dmypy.json
 # django-blog
 config/settings/env.py
 identifier.sqlite
+media
