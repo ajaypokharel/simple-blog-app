@@ -12,7 +12,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = USER
-        fields = ['email', 'first_name', 'last_name', 'gender', 'username']
+        fields = ['email', 'first_name', 'last_name', 'gender', 'username', 'password']
         read_only_fields = ['username', 'display_name']
         extra_kwargs = {
             'password': {
