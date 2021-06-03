@@ -2,7 +2,17 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.log
 
+*.pot
+
+*.pyc
+
+*/*/*/__pycache__/
+
+*/*/__pycache__/
+
+*/__pycache__/
 # C extensions
 *.so
 
@@ -53,17 +63,12 @@ coverage.xml
 
 # Translations
 *.mo
-*.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
-db.sqlite
-identifier.sqlite
 db.sqlite3-journal
-/blog/settings.py
-
+blog/settings.py
 # Flask stuff:
 instance/
 .webassets-cache
@@ -130,5 +135,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-media/
+.idea
+
 .idea/
+
+
+# django-blog
+config/settings/env.py
+identifier.sqlite
+media

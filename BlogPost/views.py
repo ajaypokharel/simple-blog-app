@@ -40,7 +40,7 @@ class BlogViewSet(ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
-        if self.action in ['update', 'partial_update']:
+        if self.action in ['update', 'partial_update', 'create']:
             kwargs['fields'] = ['title', 'content', 'image']
         return serializer_class(*args, **kwargs)
 
