@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from BlogPost.models import Bookmark
-from BlogPost.serializer import BookmarkSerializer
+from BlogPost.serializers.blog import BookmarkSerializer
 from user.permissions import IsUser
-from user.serializer import UserSerializer
+from user.serializers.user import UserSerializer
 
 USER = get_user_model()
 
