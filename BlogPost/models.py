@@ -33,3 +33,10 @@ class BlogEvent(UUIDBaseModel):
 class Bookmark(UUIDBaseModel):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='fav_blog')
     user = models.ForeignKey(USER, on_delete=models.CASCADE, related_name='user_fav')
+
+
+class BlogComment(UUIDBaseModel):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='blog_comment')
+    user = models.ForeignKey(USER, on_delete=models.CASCADE, related_name='comment_user')
+    text = models.TextField()
+    upvotes = models.IntegerField(default=0)
