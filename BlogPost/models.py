@@ -13,7 +13,7 @@ class Blog(UUIDBaseModel):
     creator = models.ForeignKey(USER, on_delete=models.CASCADE, related_name='blog_user')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    likes = models.PositiveIntegerField(default=0)
+    likes = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['created_at']
