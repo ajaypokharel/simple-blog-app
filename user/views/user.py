@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -29,8 +29,8 @@ class UserViewSet(ModelViewSet):
         permission_classes = []
         if self.action in ['list', 'retrieve', 'create']:
             permission_classes = [AllowAny]
-        if self.action in ['destroy', 'update', 'partial_update']:
-            permission_classes = [IsUser]
+        if self.action in ['destroy', 'update', 'partial_update', 'bookmarks']:
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):

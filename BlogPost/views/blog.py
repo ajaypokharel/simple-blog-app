@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -55,6 +56,8 @@ class BlogViewSet(ModelViewSet):
             kwargs['fields'] = ['title', 'content', 'image']
         if self.action in ['do_comment']:
             kwargs['fields'] = ['text']
+        if self.action in ['like', 'unlike']:
+            kwargs['fields'] = ['likes']
         return serializer_class(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):

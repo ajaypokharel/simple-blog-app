@@ -12,7 +12,7 @@ class BlogPostSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Blog
         fields = ['uuid', 'title', 'content', 'image', 'creator', 'likes', 'created_at', 'updated_at']
-        read_only_fields = ['creator,' 'uuid', 'created_at', 'updated_at', 'comment']
+        read_only_fields = ['creator,' 'uuid', 'created_at', 'updated_at', 'comment', 'likes']
 
 
 class BlogEventModelSerializer(DynamicFieldsModelSerializer):
